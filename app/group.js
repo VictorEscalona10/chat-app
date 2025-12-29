@@ -133,11 +133,11 @@ export default function Group() {
     return (
         <View style={styles.container}>
             <HeaderChat title='Crear Grupo' placeholder='Busca un contacto' />
-            <View style={styles.containerContactselected}>
+            {contacts.filter(item => item.isSelected == true).length > 0 && (
+                <View style={styles.containerContactselected}>
 
-                {contacts.filter(item => item.isSelected == true).length > 0 && (
                     <>
-                        <Text style={{ fontWeight: 'bold', textAlign: 'left' }}>Contactos agregados: {contacts.filter(item => item.isSelected == true).length}</Text>
+                        <Text style={{ fontWeight: 'bold', textAlign: 'left', marginBottom: 5 }}>Contactos agregados: {contacts.filter(item => item.isSelected == true).length}</Text>
                         <FlatList
                             horizontal
                             data={contacts.filter(item => item.isSelected == true)}
@@ -145,11 +145,11 @@ export default function Group() {
                             keyExtractor={(item, index) => index.toString()}
                         />
                     </>
-                )}
 
-            </View>
+                </View>
+            )}
 
-            <Pressable style={{ paddingHorizontal: 15, paddingVertical: 10, flexDirection: 'row', gap: 10, alignItems: 'center', borderBottomColor: '#f1f2f3ff', borderBottomWidth: 1 }}>
+            <Pressable style={[contacts.filter(item => item.isSelected == true).length > 0 ? styles.configuratioButton: styles.configuratioButtonTop]}>
                 <View style={{ backgroundColor: '#007AFF', width: 50, height: 50, justifyContent: 'center', alignItems: 'center', borderRadius: 50 }}>
                     <MaterialCommunityIcons name="account-group-outline" size={24} color="#fff" />
                 </View>
@@ -168,6 +168,28 @@ export default function Group() {
 }
 
 const styles = StyleSheet.create({
+    configuratioButton: {
+        paddingHorizontal: 15,
+        paddingVertical: 10,
+        flexDirection: 'row',
+        gap: 10,
+        alignItems: 'center',
+        borderBottomColor: '#f1f2f3ff',
+        borderBottomWidth: 1
+    },
+
+    configuratioButtonTop: {
+        marginTop: 150,
+        paddingHorizontal: 15,
+        paddingVertical: 10,
+        flexDirection: 'row',
+        gap: 10,
+        alignItems: 'center',
+        borderBottomColor: '#f1f2f3ff',
+        borderBottomWidth: 1
+    },
+
+
     container: {
         flex: 1,
         backgroundColor: '#fff',
