@@ -13,12 +13,12 @@ export default function RootLayout() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // ELIMINAR
-  /* async function clear(){
+ /* async function clear(){
     await AsyncStorage.clear()
   }
 
-  clear() */
-
+  clear()
+ */
   const hiddenRoutes = [
     "/login",
     "/register",
