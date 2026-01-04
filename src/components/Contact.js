@@ -2,14 +2,28 @@ import { View, Text, Image, StyleSheet, Pressable } from 'react-native';
 
 export default function Contact({ contact }) {
 
+    console.log(contact)
+
     return (
         <Pressable style={styles.contactItem}>
             <View style={{ position: 'relative' }}>
-                <Image source={{ uri: contact.avatar }} style={styles.avatar} />
+                {contact.user.profilePhotoUrl ?
+                    (
+                        <Image source={{ uri: contact.user.profilePhotoUrl }} style={styles.avatar} />
+                    )
+                    
+                    :
+
+                    (
+                        <View style={styles.avatarText}>
+                            <Text style={{fontWeight: 'bold', fontSize: 25, color: "#ffff"}}>{contact.nickname.charAt(0)}</Text>
+                        </View>
+                    )
+                }
             </View>
             <View style={styles.contactTextContainer}>
                 <View style={styles.contactTopRow}>
-                    <Text style={styles.contactName}>{contact.nombre}</Text>
+                    <Text style={styles.contactName}>{contact.nickname}</Text>
                     <Text style={styles.contactEmail}>{contact.email}</Text>
                 </View>
             </View>
@@ -32,6 +46,17 @@ const styles = StyleSheet.create({
         borderRadius: 25,
         marginRight: 12,
     },
+
+    avatarText: {
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        marginRight: 12,
+        backgroundColor: '#20407eff',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+
     contactTextContainer: {
         flex: 1,
         justifyContent: 'center',

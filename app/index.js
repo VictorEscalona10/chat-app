@@ -1,11 +1,8 @@
-import React from 'react';
-import Feather from '@expo/vector-icons/Feather';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import AntDesign from '@expo/vector-icons/AntDesign';
-import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StyleSheet, Text, View, ScrollView, TextInput, TouchableOpacity, FlatList, Image } from 'react-native';
 import Chat from '../src/components/Chat';
 import HeaderChat from '../src/components/HeaderChat';
+import { useEffect, useState } from 'react';
 
 const chats = [
   {
@@ -101,6 +98,28 @@ const chats = [
 ];
 
 export default function Index() {
+
+  const [userData, setUserData] = useState(null)
+
+  const readData = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userData');
+      if (token !== null) {
+        setUserData(token)
+      }
+    } catch (error) {
+      console.log('Error al leer', error);
+    }
+  };
+
+
+  useEffect(() => {
+    readData()
+  }, [])
+
+  console.log(userData)
+
+
   const renderItem = ({ item }) => <Chat chat={item} />;
 
   return (
@@ -116,7 +135,7 @@ export default function Index() {
         contentContainerStyle={{ paddingTop: 160 }} // deja espacio para el header fijo
       />
 
-      
+
     </View>
   );
 }
@@ -126,7 +145,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
-  
+
   badge: {
     backgroundColor: '#007AFF',
     borderRadius: 12,
