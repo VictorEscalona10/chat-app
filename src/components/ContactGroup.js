@@ -4,6 +4,7 @@ import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 export default function ContactGroup({ contact, selectContact }) {
 
 
+    
 
     return (
         <Pressable style={styles.contactItem} onPress={()=> selectContact(contact)}>
