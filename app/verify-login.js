@@ -81,47 +81,32 @@ export default function VerifyLoginScreen() {
     };
 
     const handleVerify = async () => {
-        const verificationCode = code.join('');
-        
-        if (verificationCode.length !== 6) {
-            Alert.alert('Error', 'Por favor ingresa el código completo de 6 dígitos');
-            return;
-        }
+  if (loading) return;
 
-        setLoading(true);
-        try {
-            console.log('Verificando código de login para:', email);
-            
-            const result = await verifyLogin(email, verificationCode);
+  const verificationCode = code.join('');
 
-            if (result.success && result.data.token) {
-                // Guardar el token en AsyncStorage
-                await AsyncStorage.setItem('userToken', result.data.token);
-                await AsyncStorage.setItem('userData', JSON.stringify(result.data.user));
-                
-                Alert.alert(
-                    '¡Inicio de sesión exitoso!',
-                    'Has iniciado sesión correctamente',
-                    [
-                        {
-                            text: 'Continuar',
-                            onPress: () => {
-                                // Redirigir a la pantalla principal
-                                router.replace('/');
-                            }
-                        }
-                    ]
-                );
-            } else {
-                Alert.alert('Error', result.error || 'No se recibió el token de autenticación');
-            }
-        } catch (error) {
-            console.error('Error en verificación de login:', error);
-            Alert.alert('Error', error.message || 'Error al procesar la solicitud');
-        } finally {
-            setLoading(false);
-        }
-    };
+  if (verificationCode.length !== 6) return;
+
+  setLoading(true);
+
+  try {
+    const result = await verifyLogin(email, verificationCode);
+
+    if (result.success && result.data.token) {
+      await AsyncStorage.setItem('userToken', result.data.token);
+      await AsyncStorage.setItem('userData', JSON.stringify(result.data.user));
+
+      router.replace('/');
+    } else {
+      Alert.alert('Error', result.error || 'Código inválido');
+    }
+  } catch (error: any) {
+    Alert.alert('Error', error.message || 'Error al verificar');
+  } finally {
+    setLoading(false);
+  }
+};
+
 
     const handleResendCode = async () => {
         if (!canResend) return;
