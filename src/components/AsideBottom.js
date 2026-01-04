@@ -37,7 +37,7 @@ export default function AsideBottom() {
             </Pressable>
 
             <Pressable onPress={() => {
-                router.push('/register');
+                router.push('/login');
                 setActiveTab('profile')
             }} style={styles.button}>
                 <FontAwesome6 name="circle-user" size={24} color={activeTab === 'profile' ? '#007AFF' : 'black'} />

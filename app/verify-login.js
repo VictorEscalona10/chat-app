@@ -6,9 +6,10 @@ import {
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useState, useEffect, useRef } from 'react';
 import Feather from '@expo/vector-icons/Feather';
-import { useAuth } from '../src/server/auth'; // Cambiado para usar useAuth
+import { useAuth } from '../src/server/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function VerifyScreen() {
+export default function VerifyLoginScreen() {
     const params = useLocalSearchParams();
     const email = params.email || '';
     
@@ -19,7 +20,7 @@ export default function VerifyScreen() {
     const [canResend, setCanResend] = useState(false);
     
     const inputRefs = useRef([]);
-    const { verifyCode, resendCode } = useAuth(); // Usamos useAuth
+    const { verifyLogin, login } = useAuth();
 
     useEffect(() => {
         let interval;
@@ -80,53 +81,41 @@ export default function VerifyScreen() {
     };
 
     const handleVerify = async () => {
-        const verificationCode = code.join('');
-        
-        if (verificationCode.length !== 6) {
-            Alert.alert('Error', 'Por favor ingresa el código completo de 6 dígitos');
-            return;
-        }
+  if (loading) return;
 
-        setLoading(true);
-        try {
-            const result = await verifyCode(email, verificationCode);
+  const verificationCode = code.join('');
 
-            if (result.success) {
-                console.log('Respuesta de verificación:', result.data);
-                
-                if (result.data.token) {
-                    Alert.alert(
-                        '¡Verificación exitosa!',
-                        'Tu cuenta ha sido verificada correctamente',
-                        [
-                            {
-                                text: 'Continuar',
-                                onPress: () => {
-                                    router.replace('/login');
-                                }
-                            }
-                        ]
-                    );
-                } else {
-                    Alert.alert('Error', 'No se recibió el token de autenticación');
-                }
-            } else {
-                Alert.alert('Error', result.error);
-            }
-        } catch (error) {
-            console.error('Error en verificación:', error);
-            Alert.alert('Error', error.message || 'Error al verificar el código');
-        } finally {
-            setLoading(false);
-        }
-    };
+  if (verificationCode.length !== 6) return;
+
+  setLoading(true);
+
+  try {
+    const result = await verifyLogin(email, verificationCode);
+
+    if (result.success && result.data.token) {
+      await AsyncStorage.setItem('userToken', result.data.token);
+      await AsyncStorage.setItem('userData', JSON.stringify(result.data.user));
+
+      router.replace('/');
+    } else {
+      Alert.alert('Error', result.error || 'Código inválido');
+    }
+  } catch (error) {
+    Alert.alert('Error', error.message || 'Error al verificar');
+  } finally {
+    setLoading(false);
+  }
+};
+
 
     const handleResendCode = async () => {
         if (!canResend) return;
 
         setResendLoading(true);
         try {
-            const result = await resendCode(email);
+            console.log('Reenviando código de login para:', email);
+            
+            const result = await login(email);
             
             if (result.success) {
                 Alert.alert(
@@ -146,7 +135,7 @@ export default function VerifyScreen() {
             }
         } catch (error) {
             console.error('Error al reenviar:', error);
-            Alert.alert('Error', error.message || 'Error al reenviar el código');
+            Alert.alert('Error', error.message || 'Error al procesar la solicitud');
         } finally {
             setResendLoading(false);
         }
@@ -165,18 +154,18 @@ export default function VerifyScreen() {
                 <Pressable onPress={() => router.back()} style={styles.backButton}>
                     <Ionicons name="arrow-back" size={22} color="#007AFF" />
                 </Pressable>
-                <Text style={styles.headerTitle}>Verificar código</Text>
+                <Text style={styles.headerTitle}>Verificar inicio de sesión</Text>
             </View>
 
             <View style={styles.content}>
                 <View style={styles.iconContainer}>
-                    <Feather name="mail" size={80} color="#007AFF" />
+                    <Feather name="lock" size={80} color="#007AFF" />
                 </View>
 
-                <Text style={styles.title}>Verifica tu correo</Text>
+                <Text style={styles.title}>Verifica tu acceso</Text>
                 
                 <Text style={styles.subtitle}>
-                    Hemos enviado un código de verificación a:
+                    Hemos enviado un código de inicio de sesión a:
                 </Text>
                 
                 <Text style={styles.emailText}>{email}</Text>
@@ -208,7 +197,7 @@ export default function VerifyScreen() {
                     {loading ? (
                         <ActivityIndicator color="white" />
                     ) : (
-                        <Text style={styles.verifyButtonText}>Verificar código</Text>
+                        <Text style={styles.verifyButtonText}>Verificar y entrar</Text>
                     )}
                 </Pressable>
 
@@ -240,7 +229,8 @@ export default function VerifyScreen() {
                 <View style={styles.instructionsContainer}>
                     <Feather name="info" size={16} color="#666" />
                     <Text style={styles.instructionsText}>
-                        El código es válido por 10 minutos. Revisa tu carpeta de spam si no lo encuentras.
+                        El código de inicio de sesión es válido por 10 minutos. 
+                        Revisa tu carpeta de spam si no lo encuentras.
                     </Text>
                 </View>
             </View>
