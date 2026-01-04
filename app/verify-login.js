@@ -95,7 +95,7 @@ export default function VerifyLoginScreen() {
     if (result.success && result.data.token) {
       await AsyncStorage.setItem('userToken', result.data.token);
       await AsyncStorage.setItem('userData', JSON.stringify(result.data.user));
-
+        
       router.replace('/');
     } else {
       Alert.alert('Error', result.error || 'Código inválido');
