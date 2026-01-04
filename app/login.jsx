@@ -71,7 +71,6 @@ export default function Login() {
     }
   };
 
-  // Función para manejar cambios en los inputs
   const handleInputChange = (field, value) => {
     setFormState({
       ...formState,
@@ -82,9 +81,7 @@ export default function Login() {
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        <Pressable onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={22} color="#007AFF" />
-        </Pressable>
+        
         <Text style={styles.headerTitle}>Iniciar sesión</Text>
       </View>
 

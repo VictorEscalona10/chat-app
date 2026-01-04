@@ -100,7 +100,7 @@ export default function VerifyLoginScreen() {
     } else {
       Alert.alert('Error', result.error || 'Código inválido');
     }
-  } catch (error: any) {
+  } catch (error) {
     Alert.alert('Error', error.message || 'Error al verificar');
   } finally {
     setLoading(false);
